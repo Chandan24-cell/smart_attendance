@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Attendance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body class="theme-body">
+<div class="page-shell">
+<nav class="navbar navbar-expand-lg navbar-dark px-4 py-3">
+    <span class="navbar-brand mb-0 h1">Smart Attendance</span>
+    <div class="ms-auto d-flex flex-wrap gap-2">
+        <a href="/attendance" class="btn btn-warning btn-sm">Attendance</a>
+        <a href="/correction" class="btn btn-info btn-sm">Correction</a>
+        <a href="/reports" class="btn btn-secondary btn-sm">Reports</a>
+        <a href="/camera" class="btn btn-dark btn-sm border">Camera</a>
+        <a href="/records" class="btn btn-secondary btn-sm">Records</a>
+        <a href="/datasource" class="btn btn-light btn-sm">Data Source</a>
+        <a href="/students" class="btn btn-primary btn-sm">Students</a>
+        <a href="/sync_data" class="btn btn-success btn-sm"><i class="bi bi-arrow-repeat"></i> Sync</a>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</nav>
+
+<div class="container-fluid p-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show">{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        {% endfor %}{% endif %}
+    {% endwith %}
+
+    <div class="row mb-4">
+        <div class="col-md-3"><div class="card summary-card text-white bg-primary p-3"><h5>Total Students</h5><h2>{{ total_students }}</h2></div></div>
+        <div class="col-md-3"><div class="card summary-card text-white bg-success p-3"><h5>Enrolled</h5><h2>{{ enrolled_students }}</h2></div></div>
+        <div class="col-md-3"><div class="card summary-card text-white bg-info p-3"><h5>Total Subjects</h5><h2>{{ total_subjects }}</h2></div></div>
+        <div class="col-md-3"><div class="card summary-card text-white bg-warning p-3"><h5>Total Periods</h5><h2>{{ total_periods }}</h2></div></div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card p-3">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+                    <div>
+                        <h5 id="dashboardGreeting" class="mb-1">Good day</h5>
+                        <p id="summaryLine" class="mb-0 text-muted">{{ total_students }} students, {{ enrolled_students }} enrolled, {{ total_periods }} periods planned.</p>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if total_students - enrolled_students > 0 %}
+                        <span class="badge bg-warning text-dark">{{ total_students - enrolled_students }} not enrolled</span>
+                        {% endif %}
+                        {% if total_periods > 0 %}
+                        <span class="badge bg-info">{{ total_periods }} periods today</span>
+                        {% endif %}
+                        {% if suggested_actions %}
+                        {% for action in suggested_actions %}
+                        <span class="badge bg-secondary">{{ action }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">All Students ({{ total_students }})</h5>
+                    <span class="badge bg-secondary">Synced from Google Sheets</span>
+                </div>
+                <div class="card-body p-0 table-wrap">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr><th>Roll No</th><th>Name</th><th>Department</th><th>Section</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td><strong>{{ student.roll_no }}</strong></td>
+                            <td>{{ student.student_name }}</td>
+                            <td>{{ student.department }}</td>
+                            <td>{{ student.section }}</td>
+                            <td>
+                                {% if student.enrollment_status == 'Enrolled' %}
+                                    <span class="badge bg-success">Enrolled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Not Enrolled</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header bg-white"><h5 class="mb-0">Full Timetable (imported from Google Sheet)</h5></div>
+                <div class="card-body p-0 table-wrap">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light"><tr><th>Period</th><th>Subject</th><th>Time</th></tr></thead>
+                        <tbody>
+                        {% for item in period_rows %}
+                        <tr class="{% if loop.first %}table-active{% endif %}">
+                            <td>P{{ item.p.period_number }}</td>
+                            <td>{{ item.subject }}</td>
+                            <td>{{ item.p.start_time }} – {{ item.p.end_time }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="toastZone" class="toast-zone"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/toasts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app-enhancements.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Login - Smart Attendance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+        .split { display: flex; min-height: 100vh; }
+
+        /* left side: login form */
+        .left {
+            flex: 0 0 44%;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(165deg, #f2f5fa 0%, #e2e9f2 100%);
+            padding: 24px;
+        }
+        .login-card {
+            width: 100%; max-width: 400px;
+            border: 0; border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(30, 50, 90, .18);
+        }
+        .login-card .card-body { padding: 34px 30px; }
+
+        /* right side: hero image + text */
+        .right {
+            flex: 1; position: relative; overflow: hidden;
+            background: #0b1c33 url('/static/login_hero.jpg') center/cover no-repeat;
+        }
+        .right::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(200deg, rgba(6,18,38,.15) 0%, rgba(6,18,38,.82) 100%);
+        }
+        .hero-copy {
+            position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
+            padding: 44px 54px; color: #fff;
+        }
+        .hero-copy h1 { font-weight: 800; font-size: 2.4rem; margin-bottom: 10px; }
+        .hero-copy p { color: rgba(255,255,255,.85); max-width: 540px; }
+        .brand-tag {
+            display: inline-block; font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; color: #7ee2a8; font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+        .chips span {
+            background: rgba(255,255,255,.14);
+            border: 1px solid rgba(255,255,255,.25);
+            backdrop-filter: blur(6px);
+            padding: 7px 14px; border-radius: 999px; font-size: 13px;
+        }
+
+        /* mobile: hero becomes a top banner */
+        @media (max-width: 991px) {
+            .split { flex-direction: column; }
+            .right { flex: 0 0 240px; order: 1; }
+            .left  { flex: 1; order: 2; }
+            .hero-copy { padding: 20px 24px; }
+            .hero-copy h1 { font-size: 1.4rem; }
+            .hero-copy p, .chips { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="split">
+
+    <!-- LEFT : login form -->
+    <div class="left">
+        <div class="card login-card">
+            <div class="card-body">
+                <h3 class="text-center mb-4">🎓 Admin Login</h3>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} py-2">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="/login">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill">Login to Dashboard</button>
+                </form>
+                <p class="text-muted text-center mt-3 small mb-0">Default: admin / admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT : smart attendance hero -->
+    <div class="right">
+        <div class="hero-copy">
+            <span class="brand-tag">AI • Face Recognition • Real-Time</span>
+            <h1>Smart Attendance System</h1>
+            <p>Camera-based automatic attendance with a live dashboard, 15-minute cutoff rule,
+               audit-safe corrections and monthly email reports — no registers, no proxy.</p>
+            <div class="chips">
+                <span>📷 Auto face detection</span>
+                <span>⏱ 15-min cutoff</span>
+                <span>📊 Live analytics</span>
+                <span>🔔 Instant alerts</span>
+                <span>📧 30-day email report</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

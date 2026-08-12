@@ -1,0 +1,71 @@
+{% extends "layouts/base.html" %}
+{% block title %}Data Source - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Data source settings</h2>
+        <p class="page-subtitle">Connect your sheets, review sync history, and keep data flowing.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header bg-white"><h5 class="mb-0">🔗 Connect Google Sheets</h5></div>
+            <div class="card-body">
+                <form method="POST" action="/datasource" class="form-shell">
+                    <label class="form-label" for="student_sheet_link"><strong>Student Sheet Link</strong></label>
+                    <input id="student_sheet_link" type="text" name="student_sheet_link" class="form-control mb-2"
+                           value="{{ student_link }}" placeholder="Paste student sheet link here" title="Paste the Google Sheets link for students">
+                    <label class="form-label" for="timetable_sheet_link"><strong>Timetable Sheet Link</strong></label>
+                    <input id="timetable_sheet_link" type="text" name="timetable_sheet_link" class="form-control mb-3"
+                           value="{{ timetable_link }}" placeholder="Paste timetable sheet link here" title="Paste the Google Sheets link for the timetable">
+                    <button type="submit" class="btn btn-primary w-100">💾 Save Links</button>
+                </form>
+                <p class="small text-muted mt-2 mb-0">
+                    Sheet must be shared as "Anyone with the link → Viewer".
+                    After deployment, any admin can paste their own college sheets here.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white"><h5 class="mb-0">🔄 Manual Sync</h5></div>
+            <div class="card-body d-flex gap-2">
+                <a href="/sync_students_only" class="btn btn-success">Sync Students</a>
+                <a href="/sync_timetable_only" class="btn btn-success">Sync Timetable</a>
+                <a href="/sync_data" class="btn btn-primary">Sync All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white"><h5 class="mb-0"> Recent Sync Logs</h5></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light">
+                        <tr><th>Time</th><th>Type</th><th>Status</th><th>Rows</th><th>Added</th><th>Updated</th><th>Errors</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.last_sync_at.strftime('%d %b %H:%M') }}</td>
+                        <td>{{ log.sync_type }}</td>
+                        <td><span class="badge bg-{{ 'success' if log.sync_status == 'Success' else 'warning' }}">{{ log.sync_status }}</span></td>
+                        <td>{{ log.total_rows_read }}</td>
+                        <td>{{ log.new_records_added }}</td>
+                        <td>{{ log.records_updated }}</td>
+                        <td>{{ log.error_count }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="text-center text-muted p-3">No syncs yet.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

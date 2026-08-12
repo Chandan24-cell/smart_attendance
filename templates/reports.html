@@ -1,0 +1,122 @@
+{% extends "layouts/base.html" %}
+{% block title %}Reports - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Reports & analytics</h2>
+        <p class="page-subtitle">Track attendance patterns and export useful summaries.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-7">
+        <div class="card"><div class="card-header bg-white">Present vs Absent per Session</div>
+            <div class="card-body"><canvas id="barChart" height="120"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card"><div class="card-header bg-white d-flex justify-content-between">
+            Session Breakdown
+            <select class="form-select form-select-sm w-auto" title="Choose a session" onchange="location = '/reports?sid=' + this.value;">
+                {% for s in sessions %}
+                <option value="{{ s.session_id }}" {{ 'selected' if sid == s.session_id }}>
+                    {{ s.session_date }} P{{ s.period_number }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+            <div class="card-body"><canvas id="pieChart" height="180"></canvas></div>
+            <div class="card-footer text-end">
+                <a href="/export/{{ sid }}" class="btn btn-sm btn-success">⬇ Export CSV</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card"><div class="card-header bg-white">Subject-wise Attendance %</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Subject</th><th>Records</th><th>Present</th><th>%</th></tr></thead>
+                    <tbody>
+                    {% for r in subject_rows %}
+                    <tr><td>{{ r.name }}</td><td>{{ r.total }}</td><td>{{ r.present }}</td>
+                        <td><span class="badge bg-{{ 'success' if r.pct >= 75 else ('warning' if r.pct >= 50 else 'danger') }}">{{ r.pct }}%</span></td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card"><div class="card-header bg-white">Student-wise Attendance %</div>
+            <div class="card-body p-0 report-table">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Roll No</th><th>Name</th><th>Classes</th><th>Present</th><th>%</th></tr></thead>
+                    <tbody>
+                    {% for r in student_rows %}
+                    <tr><td>{{ r.st.roll_no }}</td><td>{{ r.st.student_name }}</td><td>{{ r.total }}</td><td>{{ r.present }}</td>
+                        <td><span class="badge bg-{{ 'success' if r.pct >= 75 else ('warning' if r.pct >= 50 else 'danger') }}">{{ r.pct }}%</span></td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-white"><h5 class="mb-0">📧 30-Day Email Report</h5></div>
+    <div class="card-body">
+        <form method="POST" action="/report_email_settings" class="row g-2 mb-2">
+            <div class="col-md-4">
+                <input class="form-control" name="smtp_email" value="{{ email_settings.smtp_email }}"
+                       placeholder="Sender Gmail (attendance.system@gmail.com)">
+            </div>
+            <div class="col-md-4">
+                <input class="form-control" name="smtp_password" type="password"
+                       value="{{ email_settings.smtp_password }}" placeholder="Gmail App Password">
+            </div>
+            <div class="col-md-4">
+                <input class="form-control" name="report_email_to" value="{{ email_settings.report_email_to }}"
+                       placeholder="Receiver email (HOD / Admin)">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">💾 Save Email Settings</button>
+                <a href="/send_report_now" class="btn btn-success">📨 Send 30-Day Report Now</a>
+            </div>
+        </form>
+        <p class="small text-muted mb-0">
+            Every attendance record (name, date, time, status) is stored permanently.
+            A complete 30-day report is emailed <strong>automatically every 30 days</strong>
+            while the engine runs — or send it manually anytime.
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ labels | tojson }},
+        datasets: [
+            { label: 'Present', data: {{ present_data | tojson }}, backgroundColor: '#198754' },
+            { label: 'Absent',  data: {{ absent_data | tojson }},  backgroundColor: '#dc3545' }
+        ]
+    }
+});
+new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Present', 'Late', 'Absent', 'Not Detected'],
+        datasets: [{ data: [{{ pie.Present }}, {{ pie.Late }}, {{ pie.Absent }}, {{ pie.NotDetected }}],
+                     backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6c757d'] }]
+    }
+});
+</script>
+{% endblock %}

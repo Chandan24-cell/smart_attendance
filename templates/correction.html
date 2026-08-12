@@ -1,0 +1,88 @@
+{% extends "layouts/base.html" %}
+{% block title %}Attendance Correction - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Attendance correction</h2>
+        <p class="page-subtitle">Adjust session outcomes with a clear audit trail.</p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <label class="form-label"><strong>Select Session to Correct</strong></label>
+        <select class="form-select" title="Choose a session to correct" onchange="location = '/correction?sid=' + this.value;">
+            <option value="">-- Choose session --</option>
+            {% for s in sessions %}
+            <option value="{{ s.session_id }}" {{ 'selected' if sid == s.session_id }}>
+                {{ s.session_date }} | Period {{ s.period_number }} | {{ s.session_status }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{% if selected %}
+<div class="card mb-4">
+    <div class="card-header bg-white"><h5 class="mb-0">Session {{ selected.session_id }} — Period {{ selected.period_number }} ({{ selected.session_status }})</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Roll No</th><th>Name</th><th>Current Status</th><th>Manual Update (reason required)</th></tr>
+            </thead>
+            <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.st.roll_no }}</td>
+                <td>{{ row.st.student_name }}</td>
+                <td>
+                    {% if not row.rec %}<span class="badge bg-secondary">No Record</span>
+                    {% elif row.rec.status == 'Present' %}<span class="badge bg-success">Present</span>
+                    {% elif row.rec.status == 'Absent' %}<span class="badge bg-danger">Absent</span>
+                    {% else %}<span class="badge bg-warning text-dark">Late - Not Accepted</span>{% endif %}
+                    {% if row.rec and row.rec.method == 'Manual' %}<span class="badge bg-info">Manual</span>{% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="/update_attendance" class="d-flex gap-2">
+                        <input type="hidden" name="session_id" value="{{ selected.session_id }}">
+                        <input type="hidden" name="student_id" value="{{ row.st.student_id }}">
+                        <select name="new_status" class="form-select form-select-sm w-auto">
+                            <option>Present</option><option>Absent</option><option>Late Not Accepted</option>
+                        </select>
+                        <input name="reason" class="form-control form-control-sm" placeholder="Reason (e.g. camera missed)" required>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header bg-white"><h5 class="mb-0">Audit Log (last 20 manual changes)</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead class="table-light">
+                <tr><th>Time</th><th>Admin</th><th>Old Status</th><th>New Status</th><th>Reason</th></tr>
+            </thead>
+            <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.changed_at.strftime('%d %b %H:%M') }}</td>
+                <td>{{ log.changed_by }}</td>
+                <td>{{ log.old_status }}</td>
+                <td>{{ log.new_status }}</td>
+                <td>{{ log.reason }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted p-3">No manual changes yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

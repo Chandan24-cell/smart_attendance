@@ -1,0 +1,71 @@
+student_name,roll_no,registration_no,department,year,section,email,photo_status
+Aarav Kumar,23CS101,REG2023001,Computer Science,3rd Year,C,aarav.kumar@college.edu,Uploaded
+Priya Sharma,23CS102,REG2023002,Computer Science,3rd Year,A,priya.sharma@college.edu,Not Uploaded
+Rahul Verma,23CS103,REG2023003,Computer Science,3rd Year,B,rahul.verma@college.edu,Uploaded
+Meera Das,23CS104,REG2023004,Computer Science,3rd Year,A,meera.das@college.edu,Uploaded
+Dhruv Verma,23CS105,REG2023005,Computer Science,3rd Year,C,dhruv.verma@college.edu,Uploaded
+Bhavya Sharma,23CS106,REG2023006,Computer Science,3rd Year,C,bhavya.sharma@college.edu,Not Uploaded
+Ananya Verma,23CS107,REG2023007,Computer Science,3rd Year,C,ananya.verma@college.edu,Uploaded
+Simran Singh,23CS108,REG2023008,Computer Science,3rd Year,C,simran.singh@college.edu,Pending
+Radhika Pillai,23CS109,REG2023009,Computer Science,3rd Year,A,radhika.pillai@college.edu,Uploaded
+Ananya Chopra,23CS110,REG2023010,Computer Science,3rd Year,A,ananya.chopra@college.edu,Uploaded
+Anjali Bose,23CS111,REG2023011,Computer Science,3rd Year,A,anjali.bose@college.edu,Not Uploaded
+Dhruv Kapoor,23CS112,REG2023012,Computer Science,3rd Year,C,dhruv.kapoor@college.edu,Uploaded
+Yash Joshi,23CS113,REG2023013,Computer Science,3rd Year,C,yash.joshi@college.edu,Uploaded
+Kritika Trivedi,23CS114,REG2023014,Computer Science,3rd Year,C,kritika.trivedi@college.edu,Not Uploaded
+Aarav Saxena,23CS115,REG2023015,Computer Science,3rd Year,C,aarav.saxena@college.edu,Not Uploaded
+Aryan Bose,23CS116,REG2023016,Computer Science,3rd Year,B,aryan.bose@college.edu,Uploaded
+Bhavya Rao,23CS117,REG2023017,Computer Science,3rd Year,B,bhavya.rao@college.edu,Not Uploaded
+Kritika Nair,23CS118,REG2023018,Computer Science,3rd Year,B,kritika.nair@college.edu,Uploaded
+Simran Saxena,23CS119,REG2023019,Computer Science,3rd Year,A,simran.saxena@college.edu,Not Uploaded
+Nisha Reddy,23CS120,REG2023020,Computer Science,3rd Year,B,nisha.reddy@college.edu,Pending
+Ishita Malhotra,23CS121,REG2023021,Computer Science,3rd Year,B,ishita.malhotra@college.edu,Uploaded
+Karan Chauhan,23CS122,REG2023022,Computer Science,3rd Year,A,karan.chauhan@college.edu,Pending
+Gaurav Pillai,23CS123,REG2023023,Computer Science,3rd Year,A,gaurav.pillai@college.edu,Uploaded
+Swati Trivedi,23CS124,REG2023024,Computer Science,3rd Year,B,swati.trivedi@college.edu,Uploaded
+Sneha Mukherjee,23CS125,REG2023025,Computer Science,3rd Year,B,sneha.mukherjee@college.edu,Pending
+Aisha Chopra,23CS126,REG2023026,Computer Science,3rd Year,C,aisha.chopra@college.edu,Pending
+Pooja Rathi,23CS127,REG2023027,Computer Science,3rd Year,A,pooja.rathi@college.edu,Not Uploaded
+Mohit Verma,23CS128,REG2023028,Computer Science,3rd Year,B,mohit.verma@college.edu,Not Uploaded
+Ritu Bhatt,23CS129,REG2023029,Computer Science,3rd Year,A,ritu.bhatt@college.edu,Pending
+Suraj Desai,23CS130,REG2023030,Computer Science,3rd Year,A,suraj.desai@college.edu,Not Uploaded
+Devansh Bose,23CS131,REG2023031,Computer Science,3rd Year,B,devansh.bose@college.edu,Not Uploaded
+Rohan Sharma,23CS132,REG2023032,Computer Science,3rd Year,C,rohan.sharma@college.edu,Pending
+Nandini Saxena,23CS133,REG2023033,Computer Science,3rd Year,C,nandini.saxena@college.edu,Uploaded
+Ritu Verma,23CS134,REG2023034,Computer Science,3rd Year,C,ritu.verma@college.edu,Uploaded
+Nandini Yadav,23CS135,REG2023035,Computer Science,3rd Year,A,nandini.yadav@college.edu,Not Uploaded
+Karan Malhotra,23CS136,REG2023036,Computer Science,3rd Year,A,karan.malhotra@college.edu,Pending
+Kritika Joshi,23CS137,REG2023037,Computer Science,3rd Year,A,kritika.joshi@college.edu,Uploaded
+Suraj Iyer,23CS138,REG2023038,Computer Science,3rd Year,A,suraj.iyer@college.edu,Pending
+Payal Chauhan,23CS139,REG2023039,Computer Science,3rd Year,B,payal.chauhan@college.edu,Pending
+Rajat Das,23CS140,REG2023040,Computer Science,3rd Year,C,rajat.das@college.edu,Pending
+Harsh Bose,23CS141,REG2023041,Computer Science,3rd Year,A,harsh.bose@college.edu,Pending
+Diya Pillai,23CS142,REG2023042,Computer Science,3rd Year,B,diya.pillai@college.edu,Uploaded
+Tanvi Chopra,23CS143,REG2023043,Computer Science,3rd Year,C,tanvi.chopra@college.edu,Pending
+Divya Iyer,23CS144,REG2023044,Computer Science,3rd Year,C,divya.iyer@college.edu,Not Uploaded
+Parth Malhotra,23CS145,REG2023045,Computer Science,3rd Year,C,parth.malhotra@college.edu,Uploaded
+Harsh Rathi,23CS146,REG2023046,Computer Science,3rd Year,C,harsh.rathi@college.edu,Not Uploaded
+Yash Das,23CS147,REG2023047,Computer Science,3rd Year,A,yash.das@college.edu,Not Uploaded
+Sonia Bhatt,23CS148,REG2023048,Computer Science,3rd Year,C,sonia.bhatt@college.edu,Uploaded
+Kavya Singh,23CS149,REG2023049,Computer Science,3rd Year,A,kavya.singh@college.edu,Pending
+Vikram Trivedi,23CS150,REG2023050,Computer Science,3rd Year,B,vikram.trivedi@college.edu,Pending
+Amit Malhotra,23CS151,REG2023051,Computer Science,3rd Year,C,amit.malhotra@college.edu,Not Uploaded
+Harsh Verma,23CS152,REG2023052,Computer Science,3rd Year,C,harsh.verma@college.edu,Uploaded
+Simran Rathi,23CS153,REG2023053,Computer Science,3rd Year,C,simran.rathi@college.edu,Pending
+Amit Gupta,23CS154,REG2023054,Computer Science,3rd Year,A,amit.gupta@college.edu,Uploaded
+Kartik Malhotra,23CS155,REG2023055,Computer Science,3rd Year,A,kartik.malhotra@college.edu,Pending
+Aisha Nair,23CS156,REG2023056,Computer Science,3rd Year,B,aisha.nair@college.edu,Pending
+Swati Nair,23CS157,REG2023057,Computer Science,3rd Year,A,swati.nair@college.edu,Uploaded
+Divya Mukherjee,23CS158,REG2023058,Computer Science,3rd Year,C,divya.mukherjee@college.edu,Not Uploaded
+Aarohi Patel,23CS159,REG2023059,Computer Science,3rd Year,B,aarohi.patel@college.edu,Uploaded
+Bhavya Chowdhury,23CS160,REG2023060,Computer Science,3rd Year,C,bhavya.chowdhury@college.edu,Pending
+Ishaan Chauhan,23CS161,REG2023061,Computer Science,3rd Year,B,ishaan.chauhan@college.edu,Not Uploaded
+Prateek Bansal,23CS162,REG2023062,Computer Science,3rd Year,B,prateek.bansal@college.edu,Uploaded
+Ishita Saxena,23CS163,REG2023063,Computer Science,3rd Year,B,ishita.saxena@college.edu,Uploaded
+Arjun Yadav,23CS164,REG2023064,Computer Science,3rd Year,A,arjun.yadav@college.edu,Not Uploaded
+Siddharth Nair,23CS165,REG2023065,Computer Science,3rd Year,C,siddharth.nair@college.edu,Not Uploaded
+Aryan Trivedi,23CS166,REG2023066,Computer Science,3rd Year,B,aryan.trivedi@college.edu,Not Uploaded
+Bhavya Pillai,23CS167,REG2023067,Computer Science,3rd Year,C,bhavya.pillai@college.edu,Pending
+Rohan Malhotra,23CS168,REG2023068,Computer Science,3rd Year,C,rohan.malhotra@college.edu,Pending
+Mohit Pillai,23CS169,REG2023069,Computer Science,3rd Year,B,mohit.pillai@college.edu,Uploaded
+Parth Agarwal,23CS170,REG2023070,Computer Science,3rd Year,A,parth.agarwal@college.edu,Not Uploaded

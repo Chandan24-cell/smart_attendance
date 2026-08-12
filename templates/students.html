@@ -1,0 +1,160 @@
+{% extends "layouts/base.html" %}
+{% block title %}Students - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title">All Students ({{ count }})</h2>
+        <p class="page-subtitle">Review student status, manage enrollments, and keep the roster current.</p>
+    </div>
+    <input type="text" id="search" class="form-control w-25" placeholder="Search name or roll no..." title="Search students" aria-label="Search students">
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0" id="studentTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Photo</th><th>Roll No</th><th>Name</th><th>Reg No</th>
+                    <th>Section</th><th>Email</th><th>Status</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in data %}
+                <tr>
+                    <td>
+                        {% if item.photo %}
+                            <img src="{{ item.photo }}" class="student-photo" alt="{{ item.s.student_name }} photo">
+                        {% else %}
+                            <div class="student-avatar">?</div>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ item.s.roll_no }}</strong></td>
+                    <td>{{ item.s.student_name }}</td>
+                    <td>{{ item.s.registration_no }}</td>
+                    <td>{{ item.s.section }}</td>
+                    <td>{{ item.s.email }}</td>
+                    <td>
+                        {% if item.s.enrollment_status == 'Enrolled' %}
+                            <span class="badge bg-success">Enrolled</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Not Enrolled</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/student/{{ item.s.student_id }}" class="btn btn-sm btn-primary">📄 Records</a>
+                        <button type="button" class="btn btn-sm btn-success"
+                            onclick="openEnroll({{ item.s.student_id }}, '{{ item.s.student_name }}', '{{ item.s.roll_no }}')" title="Enroll {{ item.s.student_name }}">
+                            📷 Enroll
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Enrollment Modal -->
+<div class="modal fade" id="enrollModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">📷 Face Enrollment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p id="enrollStudentLabel" class="fw-bold mb-2"></p>
+                <video id="enrollVideo" autoplay playsinline class="enroll-video"></video>
+                <div class="mt-2 d-flex justify-content-center">
+                    <label class="form-label visually-hidden" for="cameraSelect">Camera</label>
+                    <select id="cameraSelect" class="form-select w-auto" title="Select a camera"></select>
+                </div>
+                <p id="enrollMsg" class="mt-2 small"></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button class="btn btn-success" id="captureBtn">📸 Capture & Enroll</button>
+            </div>
+        </div>
+    </div>
+</div>
+<canvas id="snapCanvas" class="hidden-canvas"></canvas>
+
+<script>
+let currentStream = null;
+let currentStudentId = null;
+
+async function startCamera(deviceId) {
+    if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+    currentStream = await navigator.mediaDevices.getUserMedia({
+        video: deviceId ? { deviceId: { exact: deviceId } } : true
+    });
+    document.getElementById('enrollVideo').srcObject = currentStream;
+}
+
+async function openEnroll(id, name, roll) {
+    currentStudentId = id;
+    document.getElementById('enrollStudentLabel').textContent = name + ' (' + roll + ')';
+    document.getElementById('enrollMsg').textContent = 'Starting camera...';
+    new bootstrap.Modal(document.getElementById('enrollModal')).show();
+    try {
+        await startCamera(null);
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const cams = devices.filter(d => d.kind === 'videoinput');
+        const sel = document.getElementById('cameraSelect');
+        sel.innerHTML = '';
+        cams.forEach((c, i) => {
+            const opt = document.createElement('option');
+            opt.value = c.deviceId;
+            opt.textContent = c.label || ('Camera ' + (i + 1));
+            sel.appendChild(opt);
+        });
+        sel.onchange = () => startCamera(sel.value);
+        document.getElementById('enrollMsg').textContent =
+            'Look straight at the camera, good light on your face.';
+    } catch (e) {
+        document.getElementById('enrollMsg').innerHTML =
+            '<span class="text-danger">❌ Camera permission denied. Allow camera in browser settings.</span>';
+    }
+}
+
+document.getElementById('captureBtn').onclick = async () => {
+    const video = document.getElementById('enrollVideo');
+    const canvas = document.getElementById('snapCanvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+    const msg = document.getElementById('enrollMsg');
+    msg.textContent = '⏳ Processing face...';
+
+    const res = await fetch('/enroll_capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id: currentStudentId, image: dataUrl })
+    });
+    const out = await res.json();
+
+    if (out.ok) {
+        msg.innerHTML = '<span class="text-success">✅ DONE! ' + out.message + '</span>';
+        setTimeout(() => location.reload(), 1200);
+    } else {
+        msg.innerHTML = '<span class="text-danger">❌ ' + out.error + '</span>';
+    }
+};
+
+document.getElementById('enrollModal').addEventListener('hidden.bs.modal', () => {
+    if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+});
+
+document.getElementById('search').addEventListener('keyup', function () {
+    let q = this.value.toLowerCase();
+    document.querySelectorAll('#studentTable tbody tr').forEach(function (row) {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

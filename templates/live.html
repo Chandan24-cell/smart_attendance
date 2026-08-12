@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}
+{% block title %}Live Attendance - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h5 class="mb-0">Period {{ s.period_number }} — {{ subject.subject_name if subject else '' }}
+        <span class="text-muted small">(Start {{ s.start_time }} | Cutoff {{ s.cutoff_time }})</span></h5>
+    <span class="badge fs-6 bg-{{ 'success' if s.session_status == 'Running' else 'secondary' }}">{{ s.session_status }}</span>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4"><div class="card text-white bg-success p-3"><h5>Present</h5><h2>{{ present }}</h2></div></div>
+    <div class="col-md-4"><div class="card text-white bg-warning p-3"><h5>Late (Not Accepted)</h5><h2>{{ late }}</h2></div></div>
+    <div class="col-md-4"><div class="card text-white bg-secondary p-3"><h5>Not Detected Yet</h5><h2>{{ total - present - late }}</h2></div></div>
+</div>
+
+<div class="card"><div class="card-body p-0">
+    <table class="table table-sm table-hover mb-0">
+        <thead class="table-light">
+            <tr><th>Roll No</th><th>Name</th><th>Status</th><th>Detected Time</th></tr>
+        </thead>
+        <tbody>
+        {% for row in rows %}
+            <tr>
+                <td>{{ row.s.roll_no }}</td>
+                <td>{{ row.s.student_name }}</td>
+                <td>
+                    {% if row.status == 'Present' %}<span class="badge bg-success">Present</span>
+                    {% elif row.status == 'Late Not Accepted' %}<span class="badge bg-warning text-dark">Late - Not Accepted</span>
+                    {% elif row.status == 'Absent' %}<span class="badge bg-danger">Absent</span>
+                    {% else %}<span class="badge bg-secondary">Not Detected</span>{% endif %}
+                </td>
+                <td>{{ row.r.detected_time if row.r and row.r.detected_time else '-' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+{% if s.session_status == 'Running' %}
+setTimeout(function () { location.reload(); }, 5000);
+{% endif %}
+</script>
+{% endblock %}

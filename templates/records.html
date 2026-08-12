@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+{% block title %}Records - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Attendance records</h2>
+        <p class="page-subtitle">Browse detections, session summaries, and record history.</p>
+    </div>
+</div>
+
+<form method="GET" action="/records" class="mb-3 d-flex gap-2 align-items-end form-shell">
+    <div>
+        <label class="form-label mb-1" for="dateFilter">Filter by Date</label>
+        <input id="dateFilter" type="date" name="date" class="form-control" value="{{ date_filter }}" title="Filter records by date">
+    </div>
+    <button type="submit" class="btn btn-primary">Apply</button>
+    <a href="/records" class="btn btn-secondary">Clear</a>
+</form>
+
+<div class="card mb-4">
+    <div class="card-header bg-white"><h5 class="mb-0">Camera Detection Logs</h5></div>
+    <div class="card-body p-0" style="max-height:400px; overflow-y:auto;">
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Date</th><th>Time</th><th>Roll No</th><th>Name</th><th>Event</th><th>Camera</th></tr>
+            </thead>
+            <tbody>
+            {% for l in logs %}
+            <tr>
+                <td>{{ l.detected_at.strftime('%d %b %Y') }}</td>
+                <td>{{ l.detected_at.strftime('%H:%M:%S') }}</td>
+                <td>{{ l.roll_no or '-' }}</td>
+                <td>{{ l.name or '-' }}</td>
+                <td>
+                    {% if l.event_type == 'PRESENT' %}<span class="badge bg-success">Present Marked</span>
+                    {% elif l.event_type == 'LATE_NOT_ACCEPTED' %}<span class="badge bg-warning text-dark">Late - Not Accepted</span>
+                    {% elif l.event_type == 'UNKNOWN_FACE' %}<span class="badge bg-secondary">Not Enrolled / Unknown</span>
+                    {% elif l.event_type == 'UNCLEAR_FACE' %}<span class="badge bg-info">Unclear Face</span>
+                    {% endif %}
+                </td>
+                <td class="small">{{ l.camera_source }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted p-3">No detection logs.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white"><h5 class="mb-0">Attendance Records</h5></div>
+    <div class="card-body p-0" style="max-height:400px; overflow-y:auto;">
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Session Date</th><th>Period</th><th>Roll No</th><th>Name</th><th>Status</th><th>Detected Time</th><th>Method</th></tr>
+            </thead>
+            <tbody>
+            {% for row in att_rows %}
+            <tr>
+                <td>{{ row.s.session_date }}</td>
+                <td>P{{ row.s.period_number }}</td>
+                <td>{{ row.roll }}</td>
+                <td>{{ row.name }}</td>
+                <td>
+                    {% if row.r.status == 'Present' %}<span class="badge bg-success">Present</span>
+                    {% elif row.r.status == 'Absent' %}<span class="badge bg-danger">Absent</span>
+                    {% else %}<span class="badge bg-warning text-dark">Late - Not Accepted</span>{% endif %}
+                </td>
+                <td>{{ row.r.detected_time or '-' }}</td>
+                <td>{{ row.r.method }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="text-center text-muted p-3">No attendance records.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

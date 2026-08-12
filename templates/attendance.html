@@ -1,0 +1,97 @@
+{% extends "layouts/base.html" %}
+{% block title %}Attendance Sessions - Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Attendance sessions</h2>
+        <p class="page-subtitle">Start a session, monitor live participation, and keep the flow moving.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white"><h5 class="mb-0">Start New Session</h5></div>
+            <div class="card-body">
+                <form method="POST" action="/start_session" class="form-shell">
+                    <label class="form-label" for="schedule_id">Select Period</label>
+                    <select id="schedule_id" name="schedule_id" class="form-select mb-2" title="Select the period to start" required>
+                        {% for item in period_rows %}
+                        <option value="{{ item.p.schedule_id }}">
+                            Period {{ item.p.period_number }} — {{ item.subject }} ({{ item.p.start_time }}–{{ item.p.end_time }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <label class="form-label" for="grace_minutes">Grace Minutes (cutoff window)</label>
+                    <input id="grace_minutes" type="number" name="grace_minutes" class="form-control mb-3"
+                           value="{{ default_grace }}" min="1" max="60" title="Set the grace minutes for this session">
+                    <button type="submit" class="btn btn-success w-100">▶ Start Session Now</button>
+                </form>
+                <p class="small text-muted mt-2 mb-0">
+                    Attendance is accepted only until cutoff.
+                    💡 Testing tip: set grace = 1 minute to see the cutoff rule trigger quickly.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white"><h5 class="mb-0">Today's Sessions</h5></div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead class="table-light">
+                        <tr><th>Period</th><th>Start</th><th>Cutoff</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for s in sessions %}
+                        <tr>
+                            <td>Period {{ s.period_number }}</td>
+                            <td>{{ s.start_time }}</td>
+                            <td>{{ s.cutoff_time }}</td>
+                            <td>
+                                {% if s.session_status == 'Running' %}
+                                    <span class="badge bg-success">Running</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ s.session_status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="/live/{{ s.session_id }}" class="btn btn-sm btn-primary">Live View</a>
+                                {% if s.session_status == 'Running' %}
+                                <a href="/stop_session/{{ s.session_id }}" class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Stop and mark unmarked students Absent?');">
+                                   Stop & Finalize</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="text-center text-muted p-3">No sessions today yet.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="alert alert-info mt-3 mb-0">
+            After starting a session, <strong>Camera will automatically open to capture</strong>:
+            <code>python attendance.py 0</code> (built-in) or <code>python attendance.py 1</code> (USB webcam)
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header bg-white"><h5 class="mb-0">AI Full-Day Auto Mode</h5></div>
+            <div class="card-body">
+                <p class="mb-2">
+                    Runs the camera engine <strong>all day</strong> — automatically creates sessions
+                    from the timetable, marks <strong>Present</strong> within the grace window,
+                    <strong>Late (not accepted)</strong> after cutoff, and <strong>finalizes</strong>
+                    each period (unmarked → Absent) when it ends. No manual starting required.
+                </p>
+                <a href="/camera/start" class="btn btn-warning btn-sm">▶ Start AI Auto Mode</a>
+                <a href="/camera/stop" class="btn btn-outline-danger btn-sm">⏹ Stop Engine</a>
+                <a href="/camera" class="btn btn-outline-secondary btn-sm ms-1">⚙ Camera Settings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
