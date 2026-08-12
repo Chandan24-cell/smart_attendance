@@ -11,11 +11,16 @@ AI-powered, camera-based classroom attendance with live Google Sheets sync, cuto
 
 | Login | Dashboard |
 |---|---|
-| `docs/screenshots/login.png` | `docs/screenshots/dashboard.png` |
+| <img width="1920" height="994" alt="login" src="https://github.com/user-attachments/assets/fd46df5b-54bf-4b5f-b118-4b45d6428617" />
+ | <img width="1440" height="818" alt="dashboard" src="https://github.com/user-attachments/assets/86fdfb45-7e8d-4d6e-9c7c-ef7073fa2268" />
+ |
 
 | Live Engine | Reports |
 |---|---|
-| `docs/screenshots/live_engine.png` | `docs/screenshots/reports.png` |
+| <img width="1920" height="993" alt="live_engine" src="https://github.com/user-attachments/assets/e2696209-6542-4f84-a55e-5ceb374f0962" />
+
+
+live link : https://smart-attendance-silk-nu.vercel.app/login
 
 ## Features
 
